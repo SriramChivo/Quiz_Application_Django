@@ -296,7 +296,7 @@ $(function () {
         var get_selected_value=$("#type_of_question option:selected").val();
         console.log(get_selected_value)
         if(get_selected_value == "Multiple Choice" || get_selected_value == "Multiple Select Choice"){
-            if($("#opt1").val()=="" || $("#opt2").val()=="" || $("#opt3").val()=="" || $("#opt4").val()!=""){
+            if($("#opt1").val()=="" || $("#opt2").val()=="" || $("#opt3").val()=="" || $("#opt4").val()==""){
                 alert("Options should not be empty..");
                 throw new Error("Something went badly wrong!");
             }
