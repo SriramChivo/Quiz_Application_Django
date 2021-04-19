@@ -1,0 +1,428 @@
+{% include 'base_quiz.html' %}
+
+<head>
+    <style>
+        .highlight_back{
+            background-color: #BD3D3F;
+        }
+    </style>
+</head>
+<div class="container my-4">
+
+    <div class="row" id="info">
+
+        <div class="col-md-2 font-weight-bold">
+            Question : <span id="attended">1</span>/<span id="total_questions"></span>
+        </div>
+
+        <div class="col-md-2 font-weight-bold">
+            <label for="">Time Taken: </label>
+            <label id="minutes">00</label>:<label id="seconds">00</label>
+        </div>
+        
+
+        <div class="col-md-2 offset-md-4 font-weight-bold">
+            Maximum Score : <span id="max_score"></span>
+        </div>
+        <div class="col-md-2 font-weight-bold">
+            Your Score : <span id="your_score">0</span>
+        </div>
+    </div>
+
+    <div class="jumbotron mt-3" id="jumbo">
+        <form >
+            <input type="hidden" id="Questions_url" name="Questions_url" value={{Questions_url}}>
+        </form>
+        <form action="" id="hiddenitems">
+            
+        </form>
+        <div id="jumbo-dyn">
+            
+        </div>
+        <div class="row my-3">
+            <div class="col-md-10 offset-md-1" id="btn-div">
+                <button type="button" class="btn btn-success w-100" id="check_ans" style="display: none;">Check Answer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var minutesLabel = document.getElementById("minutes");
+        var secondsLabel = document.getElementById("seconds");
+        var totalSeconds = 0;
+        setInterval(setTime, 1000);
+
+        function setTime() {
+        ++totalSeconds;
+        secondsLabel.innerHTML = pad(totalSeconds % 60);
+        minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
+        }
+
+        function pad(val) {
+        var valString = val + "";
+        if (valString.length < 2) {
+            return "0" + valString;
+        } else {
+            return valString;
+        }
+        }
+
+    $("#check_ans").on('click',function(){
+        $("#check_ans").hide();
+        var quiz_id=$("#que_id").val()
+        var ques_type=$("#que_type").val()
+        var ques_score=parseInt($("#quiz_score").val());
+        console.log(ques_type);
+        
+        if(ques_type=="Multiple Choice"){
+            
+            var option_selected=$("#option-set div input:checked").val().toLowerCase();
+            console.log(option_selected)
+        }
+        else if(ques_type=="True/False"){
+            var option_selected=$("#option-set div input:checked").val().toLowerCase();
+            console.log(option_selected)
+        }
+        else if(ques_type=="Multiple Select Choice"){
+            var ele=[]
+            $('#select-set div input:checked').each(function(i, sel){ 
+               ele.push($(sel).val().toLowerCase());
+            });
+            var option_selected=ele.join(",");
+            console.log(option_selected)
+        }
+        else{
+            var option_selected=$("#answer-text").val().toLowerCase();
+            console.log(option_selected)
+        }
+
+        $.ajax({
+            method: "GET",
+            url: $("#Questions_url").val()+"answer/"+quiz_id.toString()+"/",
+            })
+            .done(function( response ) {
+                var ingest_next=`
+                <button type="button" class="btn btn-danger w-100 my-2" id="next_ques" style="display: none;">Next Question</button>
+                `
+                var exit=`
+                <button type="button" class="btn btn-danger w-100 my-2" id="exit_ques" style="display: none;">Close and view summary</button>
+                `
+                var Correct_answer=response["Answer"];
+                console.log(Correct_answer);
+                if(ques_type=="Multiple Select Choice"){
+                    var spliting=Correct_answer.split(",")
+                    for(var i = 0; i < spliting.length; i++) {
+                        var correct_id=$(`div [value='${spliting[i]}']`).parent()[0]
+                        $(correct_id).css("background-color","#28a745");
+                        }
+                }
+                var correct_id=$(`div [value="${Correct_answer}"]`).parent()[0]
+                console.log(correct_id)
+
+    
+                if(Correct_answer==option_selected){
+                    if(ques_type=="No Choice"){
+                        alert("Your Answer is correct");
+                    }
+                    console.log("It is correct Answer..")
+                    $(correct_id).css("background-color","#28a745");
+                    var get_score=$("#your_score").text()
+                    $("#your_score").text(parseInt(get_score)+ques_score)
+                    var attempted=parseInt($("#attended").text())
+                    var total_questions=parseInt($("#total_questions").text())
+                    if(attempted==total_questions){
+                        $(exit).appendTo("#btn-div").hide().fadeIn("1500");
+                    }
+                    else{
+                        $(ingest_next).appendTo("#btn-div").hide().fadeIn("1500");
+                    }
+                }
+                else{
+                    if(ques_type=="No Choice"){
+                        alert("Your Answer is Wrong\nCorrect Answer:"+Correct_answer);
+                    }
+                    $(correct_id).css("background-color","#28a745");
+                    var attempted=parseInt($("#attended").text())
+                    var total_questions=parseInt($("#total_questions").text())
+                    if(attempted==total_questions){
+                        $(exit).appendTo("#btn-div").hide().fadeIn("1500");
+                    }
+                    else{
+                        $(ingest_next).appendTo("#btn-div").hide().fadeIn("1500");
+                    }
+                }
+            });
+    })
+
+    $("body").on('click',"#option-set div",function(e){
+    
+        var ele=$(this);
+        $($('.highlight_back')[0]).removeClass("highlight_back");
+        var radio_ele=$(ele.children()[0]).prop("id")
+        $(this).addClass('highlight_back');
+        
+        $("#"+radio_ele.toString()).prop("checked", true);
+
+    })
+
+    $("body").on('click',"#select-set div",function(e){
+    
+    var ele=$(this);
+    var bool=$(ele.children()[0]).prop("checked");
+    console.log(bool);
+    var radio_ele=$(ele.children()[0]).prop("id")
+    var parent=$(ele.children()[0]).parent()
+    console.log(parent)
+    console.log(radio_ele);
+    if(bool==true){
+        $(parent).removeClass("highlight_back");
+        $("#"+radio_ele.toString()).prop("checked", false);
+    }
+    else{
+        $("#"+radio_ele.toString()).prop("checked", true);
+        $(this).addClass('highlight_back');
+    }
+})
+
+    function ingest_question(id){
+        $("#check_ans").hide();
+        $("#next_ques").remove();
+        var ques_id=question_id_array[id];
+        $.ajax({
+            method: "GET",
+            url: $("#Questions_url").val()+ques_id.toString()+"/",
+            })
+            .done(function( response ) {
+                var get_question=response["question_name"];
+                var get_answer_score=response["answer_score"];
+                var question_options=JSON.parse(response["question_options"]);
+                var question_type=response["question_type"];
+                console.log(question_type)
+                $("#hiddenitems").html("");
+                $('#hiddenitems').append(`<input type="hidden" id="quiz_score" value=${get_answer_score} />`);
+                
+                $('#hiddenitems').append(`<input type="hidden" id="que_type" value='${question_type}' />`);
+                
+                $('#hiddenitems').append(`<input type="hidden" id="que_id" value=${ques_id} />`);
+                const regex = /\\n|\\r\\n|\\n\\r|\\r/g;
+                get_question=get_question.replace(regex, '<br>');
+                console.log(get_question,get_answer_score,question_type,question_options)
+                if(question_type=="Multiple Choice"){
+                  var ingest_multi=  `
+                    <div class="row">
+                            <div class="col-md-10 offset-md-1">
+                                <p class="lead">
+                                    ${get_question}
+                                </p>
+                            </div>
+                            <div class="col-md-10 offset-md-1" id="option-set">
+                                <div class="form-check border border-dark rounded rounded p-2 my-2 highlight_back">
+                                    <input class="form-check-input ml-2" type="radio" name="exampleRadios" id="Radios1" value="a" checked>
+                                    <label class="form-check-label ml-4" for="exampleRadios1">
+                                        '${question_options["0"]}'
+                                    </label>
+                                </div>
+                                <div class="form-check border border-dark rounded rounded p-2 my-2">
+                                    <input class="form-check-input ml-2" type="radio" name="exampleRadios" id="Radios2" value='b' >
+                                    <label class="form-check-label ml-4" for="exampleRadios1">
+                                        '${question_options["1"]}'
+                                    </label>
+                                </div>
+                                <div class="form-check border border-dark rounded rounded p-2 my-2">
+                                    <input class="form-check-input ml-2" type="radio" name="exampleRadios" id="Radios3" value='c' >
+                                    <label class="form-check-label ml-4" for="exampleRadios1">
+                                        '${question_options["2"]}'
+                                    </label>
+                                </div>
+                                <div class="form-check border border-dark rounded rounded p-2 my-2">
+                                    <input class="form-check-input ml-2" type="radio" name="exampleRadios" id="Radios4" value='d' >
+                                    <label class="form-check-label ml-4" for="exampleRadios1">
+                                        '${question_options["3"]}'
+                                    </label>
+                                </div>
+                            </div> 
+                        </div>
+                    `
+                    $("#jumbo-dyn").html("");
+                    $(ingest_multi).appendTo("#jumbo-dyn").hide().fadeIn("1500");
+                    $("#check_ans").show();
+                }
+                else if(question_type=="Multiple Select Choice"){
+                    var ingest_multi= `
+                    <div class="row">
+                        <div class="col-md-10 offset-md-1">
+                            <p class="lead">
+                                ${get_question}
+                            </p>
+                        </div>
+                        <div class="col-md-10 offset-md-1" id="select-set">
+                            <div class="form-check border border-dark rounded p-2 my-2 highlight_back">
+                                <input class="form-check-input ml-2" type="checkbox" name="exampleRadios" id="Radios1" value='a' checked>
+                                <label class="form-check-label ml-4" for="exampleRadios1">
+                                    '${question_options["0"]}'
+                                </label>
+                            </div>
+                            <div class="form-check border border-dark rounded p-2 my-2">
+                                <input class="form-check-input ml-2" type="checkbox" name="exampleRadios" id="Radios2" value='b' >
+                                <label class="form-check-label ml-4" for="exampleRadios1">
+                                    '${question_options["1"]}'
+                                </label>
+                            </div>
+                            <div class="form-check border border-dark rounded p-2 my-2">
+                                <input class="form-check-input ml-2" type="checkbox" name="exampleRadios" id="Radios3" value='c' >
+                                <label class="form-check-label ml-4" for="exampleRadios1">
+                                    '${question_options["2"]}'
+                                </label>
+                            </div>
+                            <div class="form-check border border-dark rounded p-2 my-2">
+                                <input class="form-check-input ml-2" type="checkbox" name="exampleRadios" id="Radios4" value='d'>
+                                <label class="form-check-label ml-4" for="exampleRadios1">
+                                    '${question_options["3"]}'
+                                </label>
+                            </div>
+                    </div> 
+            </div>
+                    `
+                    $("#jumbo-dyn").html("");
+                    $(ingest_multi).appendTo("#jumbo-dyn").hide().fadeIn("1500");
+                    $("#check_ans").show();
+                }
+                else if(question_type=="True/False"){
+                    var ingest_multi=   `
+                        <div class="row">
+                                <div class="col-md-10 offset-md-1">
+                                    <p class="lead">
+                                        ${get_question}
+                                    </p>
+                                </div>
+                                <div class="col-md-10 offset-md-1" id="option-set">
+                                    <div class="form-check border border-dark rounded p-2 my-2 highlight_back">
+                                        <input class="form-check-input ml-2" type="radio" name="exampleRadios" id="Radios1" value='a' checked>
+                                        <label class="form-check-label ml-4" for="exampleRadios1">
+                                        True
+                                        </label>
+                                    </div>
+                                    <div class="form-check border border-dark rounded p-2 my-2">
+                                        <input class="form-check-input ml-2" type="radio" name="exampleRadios" id="Radios2" value='b' >
+                                        <label class="form-check-label ml-4" for="exampleRadios1">
+                                        False
+                                        </label>
+                                    </div>
+                            </div> 
+                    </div>
+                    `
+                    $("#jumbo-dyn").html("");
+                    $(ingest_multi).appendTo("#jumbo-dyn").hide().fadeIn("1500");
+                    $("#check_ans").show();
+                }
+                else{
+                    var ingest_multi=`
+                    <div class="row">
+                            <div class="col-md-10 offset-md-1">
+                                <p class="lead">
+                                    ${get_question}
+                                </p>
+                            </div>
+                            <div class="col-md-10 offset-md-1" id="no-choice-set">
+                                <input type="text" class="form-control" id="answer-text" placeholder="Enter valid answer here" value="">
+                            </div>
+            </div>
+                    `
+                    $("#jumbo-dyn").html("");
+                    $(ingest_multi).appendTo("#jumbo-dyn").hide().fadeIn("1500");
+                    $("#check_ans").show();
+                }
+            });
+        // var question_
+    }
+
+    $.ajax({
+            method: "GET",
+            url: $("#Questions_url").val(),
+            async: false,
+            })
+            .done(function( response ) {
+                get_all_questions=response["questions_ids"];
+                var get_score=response["total_score"];
+                console.log(get_all_questions);
+                console.log(get_score);
+                console.log(get_all_questions.length)
+                $("#total_questions").text(get_all_questions.length);
+                $("#max_score").text(get_score);
+            });
+    // console.log(get_all_questions)
+    var question_id_array=get_all_questions
+    var index=0
+    ingest_question(index);
+    $("body").on('click',"#next_ques",function(){
+        console.log("GOing to the next question..")
+        index+=1
+        console.log(index);
+        ingest_question(index);
+        var attempted=parseInt($("#attended").text())
+        var total_questions=parseInt($("#total_questions").text())
+        if(attempted==total_questions){
+            alert("Quiz Ended")
+        }
+        else{
+
+        }
+        $("#attended").text(attempted+1)
+    })
+    
+    $("body").on('click','#exit_ques',function(){
+        var attempted=parseInt($("#attended").text())
+        var total_questions=parseInt($("#total_questions").text())
+        var your_score=parseInt($("#your_score").text())
+        var correct=your_score/10
+        var percent=(correct/total_questions)*100
+        var mins=$("#minutes").text()
+        var secs=$("#seconds").text()
+        if(percent>75){
+            var bool_res="Pass"
+        }
+        else{
+            var bool_res="Fail"
+        }
+        var max_score=parseInt($("#max_score").val())
+        $("#exit_ques").hide();
+        $("#jumbo-dyn").html("");
+        $("#info").html("");
+        var summary=`<div class="row">
+                
+                <div class="col-md-7 offset-md-3 text-center">
+                    <p class="lead font-weight-bold text-success">
+                        Congratulations ! The quiz has been completed Successfully...!
+                    </p>
+                </div>
+            
+                <div class="col-md-8 offset-md-2 text-center">
+                    <p class="lead font-weight-bold text-success">
+                        No of Question correctly answered : ${correct}/${total_questions}
+                    </p>
+                </div>
+                <div class="col-md-8 offset-md-2 text-center">
+                    <p class="lead font-weight-bold text-success">
+                        Total Time Taken : ${mins} mins :${secs} secs
+                    </p>
+                </div>
+                <div class="col-md-8 offset-md-2 text-center">
+                    <p class="lead font-weight-bold text-success">
+                        Required Pass Precentage : 75%
+                    </p>
+                </div>
+                <div class="col-md-8 offset-md-2 text-center">
+                    <p class="lead font-weight-bold text-success">
+                        Your quiz result percenatge : ${percent}%
+                    </p>
+                </div>
+                <div class="col-md-8 offset-md-2 text-center">
+                    <p class="lead font-weight-bold text-success">
+                        Quiz Result :<span class="text-danger"> ${bool_res}</span>
+                    </p>
+                </div>
+            </div>`
+            $(summary).appendTo("#jumbo-dyn").hide().fadeIn("1500");
+    })
+</script>

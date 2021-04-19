@@ -1,0 +1,356 @@
+{% include 'base_quiz.html' %}
+<head>
+    <style>
+        div.disabled
+            {
+            pointer-events: none;
+
+            /* for "disabled" effect */
+            opacity: 0.3;
+            background: #CCC;
+            }
+    </style>
+</head>
+<div class="container my-4">
+    <div class="jumbotron">
+        <form id="hiddenitems">
+            <input type="hidden" id="category_url" name="category_url" value="{% url 'get-category' %}">
+            <input type="hidden" id="register_quiz" name="register_quiz" value="{% url 'Quiz-register' %}">
+            <input type="hidden" id="username" name="username" value={{user.get_username}}>
+            <input type="hidden" id="user_created_quiz" name="user_created_quiz" value="{% url 'user_created_quiz' %}">
+            <input type="hidden" id="register_question" name="register_question" value="{% url 'register_question' %}">
+            
+        </form>
+        
+        <div class="row" id="quiz_create_update">
+            <div class="col-md-4 offset-md-4">
+                <a type="button" class="btn btn-primary text-light" onclick='add_quiz()'>Create New Quiz</a>
+                <a type="button" class="btn btn-primary text-light mx-3" onclick='update_quiz()'>Update Quiz</a> 
+            </div>
+        </div>
+
+        <div class="row" id="quiz_select">
+            <div class="col-md-4 offset-md-4 mb-4 mt-1">
+                <label class="mr-sm-2" for="inlineFormCustomSelect">Select any Quiz to add questions:</label>
+                <select class="custom-select mr-sm-2" id="All_Quiz_names"> 
+                </select>
+            </div>
+        </div>
+    
+    <form id="Form_Question">
+        <div class="row">
+        
+            <div class="col-md-8 offset-md-1">
+                <div class="form-group">
+                    <label for="Quizname">Question:</label>
+                    <textarea class="form-control" id="question" rows="4" cols="90" placeholder="Type your Question here.." value=""></textarea>
+                </div>
+            </div>
+            <div class="col-md-3" id="types_quest">
+                <label class="mr-sm-2" for="inlineFormCustomSelect">Type of Question</label>
+                <select class="custom-select mr-sm-2" id="type_of_question">
+                    <option value="Multiple Choice">Multiple Choice</option>
+                    <option value="Multiple Select Choice">Multiple Select Choice</option>
+                    <option value="True/False">True/False</option>
+                    <option value="No Choice" selected>No Choice</option>
+                </select>
+            </div>
+            <div class="col-md-8 offset-md-1 my-2" id="text-answer">
+                <div class="form-group">
+                    <label for="Quizname">Answer:</label>
+                    <textarea class="form-control" id="answer" rows="4" cols="90" placeholder="Type your Anser here for the above question.." value=""></textarea>
+                </div>
+            </div>
+            <div class="col-md-10 offset-md-1" id="option-set1" style="display: none;">
+                <p>
+                    Create Options for the above question :
+                </p>
+                <div class="form-row">
+                    <div class="col">
+                    <input type="text" class="form-control" placeholder="Option1" id="opt1" value="">
+                    </div>
+                    <div class="col">
+                    <input type="text" class="form-control" placeholder="Option2" id="opt2" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 offset-md-1 mt-4" id="option-set2" style="display: none;">
+                <div class="form-row">
+                    <div class="col">
+                    <input type="text" class="form-control" placeholder="Option3" id="opt3" value="">
+                    </div>
+                    <div class="col">
+                    <input type="text" class="form-control" placeholder="Option4" id="opt4" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 offset-md-1 mt-3" id="option-answer" style="display: none;">
+                <div class="form-group">
+                    <label for="Quizname">Correct Answer from the above option:</label>
+                    <input type="text" class="form-control" id="answer-option" placeholder="Enter valid Answer" value="">
+                </div>
+            </div>
+            <div class="col-md-4 offset-md-1 mt-3" id="score">
+                <div class="form-group">
+                    <label for="Quizname">Score for this question:</label>
+                    <input type="number" class="form-control" id="score-text" placeholder="Enter valid score in number" value="10">
+                </div>
+            </div>
+            <div class="col-md-4 offset-md-7 mt-3">
+                <button type="button" class="btn btn-outline-success" id="save_add">Save and add Another</button>
+                <button type="button" class="btn btn-outline-success ml-2" id="save_exit">Save and exit</button>
+
+            </div>
+        </div>
+    </form>
+        
+        <!-- <input type="hidden" id="custId" name="custId" value="3487"> -->
+        <form id="quiz_create_form">
+                <div class="row">
+                    <div class="col-md-4 offset-md-1">
+                        <div class="form-group">
+                            <label for="Quizname">Quiz Name:</label>
+                            <input type="text" class="form-control" id="quizname" aria-describedby="emailHelp" placeholder="Enter valid Quiz name">
+                            <small id="emailHelp" class="form-text text-danger">Quiz Name should be Unique.</small>
+                        </div>
+                    </div>
+                    <div class="col-auto my-1">
+                        <label class="mr-sm-2" for="inlineFormCustomSelect">Quiz Difficulty Level</label>
+                        <select class="custom-select mr-sm-2" id="quiz_difficulty_level">
+                        <option value="1" selected>Easy</option>
+                        <option value="2">Medium</option>
+                        <option value="3">Expert</option>
+                        </select>
+                    </div>
+
+                    <div class="col-auto my-1">
+                        <label class="mr-sm-2" for="inlineFormCustomSelect">Quiz Category: </label>
+                        <select class="custom-select mr-sm-2" id="quiz_catgories_select">
+                        </select>
+                    </div>
+                    <div class="col-sm-4 offset-sm-1 col-md-4 offset-md-4 text-center my-1" id="create_btn">
+                        <a type="button" class="btn btn-primary text-light" onclick='create_quiz()'>Create Quiz</a>
+                    </div>
+                </div>
+            <!--  -->
+        </form>
+    </div>
+</div>
+
+<script>
+    $("#quiz_create_form").hide();
+    $("#quiz_select").hide();
+    $("#Form_Question").hide();
+
+    function add_quiz(){
+        $("#quiz_create_update").fadeOut(200);
+        $("#quiz_create_form").fadeIn(1000);
+    }
+
+    function update_quiz(){
+        $("#quiz_create_update").fadeOut(200);
+        $("#quiz_select").fadeIn(1000);
+        $("#Form_Question").fadeIn(1000);
+        }
+
+console.log("Hi all");
+function getCookie(c_name)
+{
+    if (document.cookie.length > 0)
+    {
+        c_start = document.cookie.indexOf(c_name + "=");
+        if (c_start != -1)
+        {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+        }
+    }
+    return "";
+ }
+
+ console.log(getCookie("csrftoken"));
+ 
+$(function () {
+    $.ajaxSetup({
+        headers: { "X-CSRFToken": getCookie("csrftoken")}
+    });
+});
+
+    function get_categories(){
+        console.log($("#category_url").val());
+        var cat_arr=[];
+        $.ajax({
+            method: "GET",
+            url: $("#category_url").val(),
+            // data: { name: "John", location: "Boston" }
+            })
+            .done(function( categories ) {
+                console.log(categories);
+                // console.log()
+                $.each(categories["Categories"], function (key,data) {
+                    console.log(data["category"]);
+                        $(`<option value='${data["category"]}'>${data["category"]}</option>`).appendTo('#quiz_catgories_select')
+                });
+        });
+        
+        $.ajax({
+            method: "GET",
+            url: $("#user_created_quiz").val(),
+            // data: { name: "John", location: "Boston" }
+            })
+            .done(function( quiznames ) {
+
+                console.log(quiznames);
+                // console.log()
+                $.each(quiznames["All_Quizes"], function (key,data) {
+                    console.log(data["All_Quizes"]);
+                        $(`<option value='${data["quiz_name"]}'>${data["quiz_name"]}</option>`).appendTo('#All_Quiz_names')
+                });
+        });
+    }
+    get_categories();
+    
+    function create_quiz(){
+        get_quiz_name=$("#quizname").val();
+        if (!get_quiz_name){
+            alert("Quiz Name is mandatory and should be unique..");
+            return ""
+        }
+        get_quiz_category=$("#quiz_catgories_select option:selected").text();
+        get_quiz_difficulty=$("#quiz_difficulty_level option:selected").text();
+        console.log(get_quiz_name,get_quiz_category,get_quiz_difficulty);
+        $.ajax({
+            method: "POST",
+            url: $("#register_quiz").val(),
+            data: { 'quiz_name': get_quiz_name, 'get_quiz_category':get_quiz_category,'get_quiz_difficulty': get_quiz_difficulty}
+            })
+            .done(function( is_created ) {
+                console.log(typeof(is_created))
+                console.log(is_created["Is_Created"]);
+                // console.log()
+                if(is_created["Is_Created"]=='true'){
+                    alert("Quiz has been successfully created, You create a questions for the quiz now..!")
+                    
+                    $("#quiz_create_form").hide();
+
+                    $("#Form_Question").fadeIn(500);
+                    
+                    $('#hiddenitems').append(`<input type="hidden" id="quiz_name" value=${is_created["quiz_id"]} />`);
+
+                    // $("#All_Quiz_names").val(data["All_Quizes"]).attr("selected","selected");
+                }
+                else if(is_created["Is_Created"]=="already exist"){
+                    alert("Quiz name is already taken, Try again")
+                }
+                else{
+                    alert("Something Went Wrong....!");
+                }
+        });
+    }
+    // console.log(get_quiz_difficulty=$("#type_of_question option:selected").val());
+    $("#type_of_question").on("change",function(){
+        
+        get_quiz_difficulty=$("#type_of_question option:selected").val();
+        if(get_quiz_difficulty == "Multiple Choice" || get_quiz_difficulty == "Multiple Select Choice"){
+            $("#text-answer").fadeOut(1000);
+            $("#option-set1").fadeIn(1000);
+            $("#option-set2").fadeIn(1000);
+            $("#option-answer").fadeIn(1000);
+        }
+        else if(get_quiz_difficulty == "True/False"){
+            $("#text-answer").fadeOut(1000);
+            $("#option-set1").fadeOut(1000);
+            $("#option-set2").fadeOut(1000);
+            $("#option-answer").fadeIn(1000);
+        }
+        else if(get_quiz_difficulty == "No Choice"){
+            $("#option-answer").fadeOut(1000);
+            $("#option-set1").fadeOut(1000);
+            $("#option-set2").fadeOut(1000);
+            $("#text-answer").fadeIn(1000);
+        }
+        else{
+            console.log("Nothing");
+        }
+    });
+
+    $("#save_add").on("click",function(event){
+        event.preventDefault();
+
+        quiz_name_set=$("#quiz_name").val();
+        if ( typeof(quiz_name_set) == "undefined" || quiz_name_set == null ) {
+            quiz_name_set=$("#All_Quiz_names option:selected").val();
+        }
+        console.log("Hi..Hello");
+        var get_question=$("#question").val();
+        var get_score=$("#score-text").val()
+        var get_answer=$("#answer-option").val();
+        if(get_question=="" || get_score=="" || get_answer==""){
+            alert("Question field / Answer Field / Score Field Should not be empty..");
+            throw new Error("Something went badly wrong!");
+        }
+        var options=[];
+        
+        var get_selected_value=$("#type_of_question option:selected").val();
+        console.log(get_selected_value)
+        if(get_selected_value == "Multiple Choice" || get_selected_value == "Multiple Select Choice"){
+            if($("#opt1").val()=="" || $("#opt2").val()=="" || $("#opt3").val()=="" || $("#opt4").val()!=""){
+                alert("Options should not be empty..");
+                throw new Error("Something went badly wrong!");
+            }
+            myJsonoptions = {
+                "0" : $("#opt1").val(),
+                "1" : $("#opt2").val(),
+                "2" : $("#opt3").val(),
+                "3" : $("#opt4").val()
+            }
+            var myJsonoptions = JSON.stringify(myJsonoptions);
+            payload_json={
+            "question":get_question,
+            "score":get_score,
+            "options":myJsonoptions,
+            "answer":get_answer,
+            "question_type":get_selected_value,
+            "quiz_name":quiz_name_set
+            }
+        }
+        else if(get_selected_value == "No Choice"){
+            var get_answer=$("#answer").val();
+            payload_json={
+            "question":get_question,
+            "score":get_score,
+            "answer":get_answer,
+            "question_type":get_selected_value,
+            "quiz_name":quiz_name_set
+            }
+        }
+        else{
+            payload_json={
+            "question":get_question,
+            "score":get_score,
+            "answer":get_answer,
+            "question_type":get_selected_value,
+            "quiz_name":quiz_name_set
+            }
+        }
+        $.ajax({
+            method: "POST",
+            url: $("#register_question").val(),
+            data: payload_json
+            })
+            .done(function( question_posted ) {
+                console.log(question_posted);
+                if(question_posted["Is_Created"]=='true'){
+                    console.log("Yes it is corrrect..!");
+                    $('#Form_Question').trigger("reset");
+                    $("#Form_Question")[0].reset();
+                    $("#All_Quiz_names").val(quiz_name_set).attr("selected","selected");
+                    $("#type_of_question").val(get_selected_value).attr("selected","selected");
+                }
+        });
+        // console.log(get_question,get_score,get_answer)
+        console.log(payload_json);
+    })
+</script>

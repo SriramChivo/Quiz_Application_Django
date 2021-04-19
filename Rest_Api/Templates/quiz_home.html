@@ -1,0 +1,38 @@
+{% include 'base_quiz.html' %}
+
+<div class="container my-4">
+    <div class="jumbotron">
+        <form action="">
+            <input type="hidden" id="list_url" name="list_url" value="{% url 'list_quiz' %}">
+        </form>
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Quiz Name</th>
+                <th scope="col">Quiz Difficulty</th>
+                <th scope="col">Quiz Category</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+    </div>
+</div>
+
+<script>
+    $.ajax({
+            method: "GET",
+            url: $("#list_url").val(),
+            })
+            .done(function( get_quiz ) {
+                    console.log(get_quiz);
+                    $.each(JSON.parse(get_quiz), function (key,data) {
+                        $(`<tr>
+                            <td>${data["quiz_name"]}</td>
+                            <td>${data["quiz_difficulty"]}</td>
+                            <td>${data["quiz_category"]["category"]}</td>
+                            <td><a class="btn btn-primary" href=${data["quiz_name"]}/>Take a Quiz</a></td>
+                        </tr>`).appendTo("#table-body")
+                    });
+            });
+</script>
