@@ -198,7 +198,7 @@
                 var get_answer_score=response["answer_score"];
                 var question_options=JSON.parse(response["question_options"]);
                 var question_type=response["question_type"];
-                console.log(question_type)
+                console.log(question_type);
                 $("#hiddenitems").html("");
                 $('#hiddenitems').append(`<input type="hidden" id="quiz_score" value=${get_answer_score} />`);
                 
@@ -217,8 +217,8 @@
                                 </p>
                             </div>
                             <div class="col-md-10 offset-md-1" id="option-set">
-                                <div class="form-check border border-dark rounded rounded p-2 my-2 highlight_back">
-                                    <input class="form-check-input ml-2" type="radio" name="exampleRadios" id="Radios1" value="a" checked>
+                                <div class="form-check border border-dark rounded rounded p-2 my-2">
+                                    <input class="form-check-input ml-2" type="radio" name="exampleRadios" id="Radios1" value="a">
                                     <label class="form-check-label ml-4" for="exampleRadios1">
                                         '${question_options["0"]}'
                                     </label>
@@ -257,8 +257,8 @@
                             </p>
                         </div>
                         <div class="col-md-10 offset-md-1" id="select-set">
-                            <div class="form-check border border-dark rounded p-2 my-2 highlight_back">
-                                <input class="form-check-input ml-2" type="checkbox" name="exampleRadios" id="Radios1" value='a' checked>
+                            <div class="form-check border border-dark rounded p-2 my-2">
+                                <input class="form-check-input ml-2" type="checkbox" name="exampleRadios" id="Radios1" value='a' >
                                 <label class="form-check-label ml-4" for="exampleRadios1">
                                     '${question_options["0"]}'
                                 </label>
@@ -297,8 +297,8 @@
                                     </p>
                                 </div>
                                 <div class="col-md-10 offset-md-1" id="option-set">
-                                    <div class="form-check border border-dark rounded p-2 my-2 highlight_back">
-                                        <input class="form-check-input ml-2" type="radio" name="exampleRadios" id="Radios1" value='a' checked>
+                                    <div class="form-check border border-dark rounded p-2 my-2">
+                                        <input class="form-check-input ml-2" type="radio" name="exampleRadios" id="Radios1" value='a'>
                                         <label class="form-check-label ml-4" for="exampleRadios1">
                                         True
                                         </label>
