@@ -288,10 +288,13 @@ $(function () {
         var get_score=$("#score-text").val()
         var get_answer=$("#answer-option").val();
         var get_selected_value=$("#type_of_question option:selected").val();
+        console.log(get_selected_value);
+        console.log(get_selected_value!=="No Choice");
         if(get_selected_value!=="No Choice"){
             if(get_question=="" || get_score=="" || get_answer==""){
             alert("Question field / Answer Field / Score Field Should not be empty..");
             throw new Error("Something went badly wrong!");
+            }
         }
         else{
             var get_answer=$("#answer").val();
@@ -300,7 +303,7 @@ $(function () {
                 throw new Error("Something went badly wrong!");
             }
         }
-        }
+        
         
         var options=[];
         
