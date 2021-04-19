@@ -63,7 +63,7 @@ ROOT_URLCONF = 'ONLINE_QUIZ_PYTHON_APP.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(mybase,'Templates')],
+        'DIRS': [os.path.join(BASE_DIR,'Templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -137,10 +137,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(mybase, 'static'),
+    os.path.join(BASE_DIR, 'static'),
 )
 
-STATIC_ROOT=os.path.join(mybase,"Static_Media_Prod")
+STATIC_ROOT=os.path.join(BASE_DIR,"Static_Media_Prod")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
