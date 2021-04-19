@@ -31,7 +31,7 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    Hello {{user.get_username}}, &nbsp; <a class="text-danger text-underline"
+                    Hello <span id="user_cred"> {{user.get_username}} </span>, &nbsp; <a class="text-danger text-underline"
                         href="{% url 'auth-implementation' %}">Logout</a>
                 </li>
             </ul>

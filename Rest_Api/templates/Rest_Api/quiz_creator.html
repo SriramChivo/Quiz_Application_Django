@@ -14,6 +14,7 @@
 <div class="container my-4">
     <div class="jumbotron">
         <form id="hiddenitems">
+            <a href="{% url 'quiz-home' %}" id="redirect" style="display:none">NOTHING</a>
             <input type="hidden" id="category_url" name="category_url" value="{% url 'get-category' %}">
             <input type="hidden" id="register_quiz" name="register_quiz" value="{% url 'Quiz-register' %}">
             <input type="hidden" id="username" name="username" value={{user.get_username}}>
@@ -276,12 +277,19 @@ $(function () {
         }
     });
 
-    $("#save_add").on("click",function(event){
+    $("#save_add,#save_exit").on("click",function(event){
         event.preventDefault();
-
+        console.log(this);
+        var add_or_exit=$(this).prop("id");
+        console.log(add_or_exit);
         quiz_name_set=$("#quiz_name").val();
         if ( typeof(quiz_name_set) == "undefined" || quiz_name_set == null ) {
             quiz_name_set=$("#All_Quiz_names option:selected").val();
+            var user_alert=$("#user_cred").text();
+            if(quiz_name_set== "undefined" || quiz_name_set == null){
+                alert(` Hi ${user_alert}, There is no quiz has been created by you to update it`);
+                throw new Error("Something went badly wrong!");
+            }
         }
         console.log("Hi..Hello");
         var get_question=$("#question").val();
@@ -357,11 +365,14 @@ $(function () {
             .done(function( question_posted ) {
                 console.log(question_posted);
                 if(question_posted["Is_Created"]=='true'){
-                    console.log("Yes it is corrrect..!");
+                    // console.log("Yes it is corrrect..!");
                     $('#Form_Question').trigger("reset");
                     $("#Form_Question")[0].reset();
                     $("#All_Quiz_names").val(quiz_name_set).attr("selected","selected");
                     $("#type_of_question").val(get_selected_value).attr("selected","selected");
+                    if(add_or_exit=="save_exit"){
+                        $("#redirect")[0].click();
+                    }
                 }
         });
         // console.log(get_question,get_score,get_answer)

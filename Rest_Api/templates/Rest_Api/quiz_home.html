@@ -10,7 +10,7 @@
             <thead>
               <tr>
                 <th scope="col">Quiz Name</th>
-                <th scope="col">Quiz Difficulty</th>
+                <th scope="col">Quiz Level</th>
                 <th scope="col">Quiz Category</th>
                 <th scope="col">Action</th>
               </tr>
@@ -24,7 +24,7 @@
 
 <script>
     function show_alert(count){
-        alert(`Quiz shoud have more than 10 questions this quiz has only ${count} Questions so please check other quizes till this quiz is ready..!`);
+        alert(`Quiz shoud have minimum 10 questions, but this quiz has only ${count} Questions so please check other quizes till this quiz is ready..!`);
     }
     $.ajax({
             method: "GET",
