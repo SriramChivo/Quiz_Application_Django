@@ -5,7 +5,8 @@
         <form action="">
             <input type="hidden" id="list_url" name="list_url" value="{% url 'list_quiz' %}">
         </form>
-        <table class="table table-bordered">
+    <div class="table-responsive">
+        <table class="table table-bordered border-primary">
             <thead>
               <tr>
                 <th scope="col">Quiz Name</th>
@@ -16,6 +17,8 @@
             </thead>
             <tbody id="table-body">
             </tbody>
+        </table>
+    </div>
     </div>
 </div>
 
@@ -36,7 +39,7 @@
                             <td>${data["quiz_name"]}</td>
                             <td>${data["quiz_difficulty"]}</td>
                             <td>${data["quiz_category"]["category"]}</td>
-                            <td><a class="btn btn-primary text-light" href='${data["quiz_name"]}'/>Take a Quiz</a></td>
+                            <td><a class="btn btn-primary text-light" href='${data["quiz_name"]}'/>Start</a></td>
                             </tr>`).appendTo("#table-body")
                         }
                         else{
@@ -44,7 +47,7 @@
                             <td>${data["quiz_name"]}</td>
                             <td>${data["quiz_difficulty"]}</td>
                             <td>${data["quiz_category"]["category"]}</td>
-                            <td><a class="btn btn-primary text-light" onclick="show_alert(${total_count})"/>Take a Quiz</a></td>
+                            <td><a class="btn btn-primary text-light" onclick="show_alert(${total_count})"/>Start</a></td>
                             </tr>`).appendTo("#table-body")
                         }
                     });
