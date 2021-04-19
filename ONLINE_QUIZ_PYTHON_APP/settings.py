@@ -35,6 +35,8 @@ ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1','quizride.herokuapp.com']
 # Application definition
 
 INSTALLED_APPS = [
+    'Quiz',
+    'Rest_Api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,8 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
-    'Quiz',
-    'Rest_Api',
     'whitenoise.runserver_nostatic'
 ]
 
@@ -63,7 +63,7 @@ ROOT_URLCONF = 'ONLINE_QUIZ_PYTHON_APP.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
