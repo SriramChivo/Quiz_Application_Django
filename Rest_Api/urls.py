@@ -21,7 +21,7 @@ urlpatterns = [
     path('api/<str:quiz_name>/<int:question_id>/',get_question_answer.as_view(),name="get_question_answer"),
     path('api/<str:quiz_name>/answer/<int:question_id>/',get_answer.as_view(),name="get_answer"),
     path('home/<str:quiz_name>/',Take_Quiz.as_view(),name="take_quiz"),
-    path('quiz-creator/', TemplateView.as_view(template_name="quiz_creator.html"),name="quiz-creator")
+    path('quiz-creator/', TemplateView.as_view(template_name="Rest_Api/quiz_creator.html"),name="quiz-creator")
 ]
 urlpatterns += [path('api-auth/', include('rest_framework.urls')),]
 

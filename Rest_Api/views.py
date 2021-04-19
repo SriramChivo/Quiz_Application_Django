@@ -24,8 +24,7 @@ class quiz_home(View):
     def get(self,request):
         if(not request.user.is_authenticated):
             return HttpResponseRedirect(reverse("auth-implementation"))
-        print()
-        return render(request,"quiz_home.html")
+        return render(request,"Rest_Api/quiz_home.html")
 
 class list_all_quiz_categories(APIView,LoginRequiredMixin):
 
@@ -126,7 +125,7 @@ class create_question(APIView,LoginRequiredMixin):
 
 class Take_Quiz(TemplateView,LoginRequiredMixin):
 
-    template_name = "quiz_main.html"
+    template_name = "Rest_Api/quiz_main.html"
 
     def get_context_data(self,quiz_name,**kwargs):
         # print(quiz_name)

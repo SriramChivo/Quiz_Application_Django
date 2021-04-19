@@ -17,6 +17,6 @@ class login_auth_implementation(View):
             login(request, is_autheticated)
             return HttpResponseRedirect(reverse("quiz-home"))
         else:
-            return render(request,"home.html",context={"error":"The username and Password not an exact match"})
+            return render(request,"Quiz/home.html",context={"error":"The username and Password not an exact match"})
     def get(self,request):
-        return render(request,"home.html")
+        return render(request,"Quiz/home.html")
