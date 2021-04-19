@@ -20,6 +20,9 @@
 </div>
 
 <script>
+    function show_alert(count){
+        alert(`Quiz shoud have more than 10 questions this quiz has only ${count} Questions so please check other quizes till this quiz is ready..!`);
+    }
     $.ajax({
             method: "GET",
             url: $("#list_url").val(),
@@ -27,12 +30,23 @@
             .done(function( get_quiz ) {
                     console.log(get_quiz);
                     $.each(JSON.parse(get_quiz), function (key,data) {
-                        $(`<tr>
+                        var total_count=parseInt(data["total_count"]);
+                        if(total_count>=10){
+                            $(`<tr>
                             <td>${data["quiz_name"]}</td>
                             <td>${data["quiz_difficulty"]}</td>
                             <td>${data["quiz_category"]["category"]}</td>
                             <td><a class="btn btn-primary" href='${data["quiz_name"]}'/>Take a Quiz</a></td>
-                        </tr>`).appendTo("#table-body")
+                            </tr>`).appendTo("#table-body")
+                        }
+                        else{
+                            $(`<tr>
+                            <td>${data["quiz_name"]}</td>
+                            <td>${data["quiz_difficulty"]}</td>
+                            <td>${data["quiz_category"]["category"]}</td>
+                            <td><a class="btn btn-primary" onclick="show_alert(${total_count})"/>Take a Quiz</a></td>
+                            </tr>`).appendTo("#table-body")
+                        }
                     });
             });
 </script>
